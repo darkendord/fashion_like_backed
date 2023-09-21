@@ -4,6 +4,8 @@ import jwt from "jsonwebtoken" // Esta seria la libreria que nos permitira manej
 import http from "http"
 import Login from "./routes/Login.js"
 import SignUp from "./routes/SignUp.js"
+import router from './routes/Login.js'
+import path from 'path'
 const app = express()
 
 const PORT = process.env.PORT || 3000
@@ -14,9 +16,92 @@ const PORT = process.env.PORT || 3000
 
 
 // Ruta de ejemplo
-app.get('/', (req, res) => {
+app.get('/login', (req, res) => {
     res.send("hola mundo");
 });
+
+import  LogInCollection from 'moongose'
+app.use(express.json())
+
+app.use(express.urlencoded({ extended: false }))
+
+const logiPath = path.join('./templetes') //templetes era una carpeta que tenia pero la borre dentro estaba un login.html sign.html
+const loginPath = path.join()//aqui tambien tenia una carpeta que contenia mi estilo pero la borre porque me daba error 
+console.log(loginPath);
+
+app.set('view engine')
+app.set('views', logiPath)
+app.use(express.static(loginPath))
+
+
+
+
+
+app.get('/signup', (req, res) => {
+    res.render('signUp')
+})
+app.get('/', (req, res) => {
+    res.render('login')
+})
+
+
+
+
+
+app.post('/signup', async (req, res) => {
+    
+ //obteniendo cuerpo de la data 
+
+    const data = {
+        name: req.body.name,
+        password: req.body.password
+    }
+
+    const checking = await LogInCollection.findOne({ name: req.body.name })
+
+   try{
+    if (checking.name === req.body.name && checking.password===req.body.password) {
+        res.send("user details already exists")
+    }
+    else{
+        await LogInCollection.insertMany([data])
+    }
+   }
+   catch{
+    res.send("wrong inputs")
+   }
+
+    res.status(201).render("home", {
+        naming: req.body.name
+    })
+})
+
+
+app.post('/login', async (req, res) => {
+
+    try {
+        const check = await LogInCollection.findOne({ name: req.body.name })
+
+        if (check.password === req.body.password) {
+            res.status(201).render( { naming: `${req.body.password}+${req.body.name}` })
+        }
+
+        else {
+            res.send("incorrect password")
+        }
+
+
+    } 
+    
+    catch (e) {
+
+        res.send("wrong details")
+        
+
+    }
+
+
+})
 
 
 app.use("/login", Login)
