@@ -6,6 +6,7 @@ import Login from "./routes/Login.js"
 import SignUp from "./routes/SignUp.js"
 import router from './routes/Login.js'
 import path from 'path'
+import  LogInCollection from 'moongose'
 const app = express()
 
 const PORT = process.env.PORT || 3000
@@ -20,7 +21,6 @@ app.get('/login', (req, res) => {
     res.send("hola mundo");
 });
 
-import  LogInCollection from 'moongose'
 app.use(express.json())
 
 app.use(express.urlencoded({ extended: false }))
@@ -38,10 +38,10 @@ app.use(express.static(loginPath))
 
 
 app.get('/signup', (req, res) => {
-    res.render('signUp')
+    res.send('signUp')
 })
 app.get('/', (req, res) => {
-    res.render('login')
+    res.send('login')
 })
 
 
